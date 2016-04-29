@@ -1,0 +1,62 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+ 
+span {display:inline-block;vertical-align:middle;text-align:center;} 
+
+ /*준비중인 메인 프레임 설정*/
+.preparing {height:400px; background:#eee; outline:dashed 1px #999;}
+
+
+/*시간표조각 제작 250px기준(수정가능))*/
+.cir_main{position:relative;width:350px;height:350px;background:#ddd;}
+
+    .cir_base{position:absolute;width:350px;height:350px;border-radius:50%;box-shadow:0 0 0px 5px rgba(255,100,100,0.5);background:#fff;}
+    
+    .cir_center_symb{position:absolute;width:50px;height:50px;margin:-25px;top:50%;left:50%;border-radius:50%;border:inset 5px #555;background:#fff;}
+    .cir_clockpin{position:absolute;width:50px;height:50px;margin:-25px;top:50%;left:50%;border-radius:0 50% 50% 50%;background:rgba(255,0,0,0.5);}
+        .longpin{position:absolute;width:2px;height:140px;margin:-1px;top:-150px;left:50%;border-radius:20%;background:linear-gradient(to bottom, rgba(0,0,0,0.8) , rgba(0,0,0,0));}
+    
+    .pie_case{position:absolute;width:100%;height:100%;border-radius:50%;overflow:hidden;transition: ease 250ms;}
+        .pie_view {position:absolute;width:50%;height:100%;right:0px;overflow:hidden;}
+            .pie_case_in {position:absolute;width:350px;height:350px;top:0px;right:0px;}
+                .piece_a{position:absolute;width:50%;height:100%;top:0px;right:0px;transition: ease 250ms;}
+                .piece_b{position:absolute;width:50%;height:100%;top:0px;left:0px;transition: ease 250ms;}
+                /*.piece:hover {opacity:0.5;filter: alpha(opacity=60); transition: ease 250ms;}*/
+                
+
+/*테이블사이즈 지정*/
+.cal_table {border:dashed 1px #888;}
+.cal_subject {height:45px;border:solid 1px #888; font-size:1.5em;font-weight:bold;}
+.cal_button_st {color:rgba(125,125,255,0.8);cursor:pointer;transition:ease 100ms;}
+.cal_button_st:hover {color:rgba(125,125,255,0.5);font-size:1.1em;transition:ease 100ms}
+.cal_today_bt {display:inline-block;height:20px;width:50px; outline:outset 2px #999;background:#fc8; font-size:12px;cursor:pointer;}
+
+.cal_date {display:inline-block;width:70px;height:70px;border:dashed 1px #888;background:rgba(0,0,0,0.2);overflow:hidden;white-space:nowrap;}
+
+/*
+.cir_main{position:relative;width:250px;height:250px;background:#ddd;}
+
+    .cir_base{position:absolute;width:250px;height:250px;border-radius:50%;box-shadow:0 0 0px 5px rgba(255,100,100,0.5);background:#fff;}
+    
+    .cir_center_symb{position:absolute;width:50px;height:50px;margin:-25px;top:50%;left:50%;border-radius:50%;border:inset 5px #555;background:#fff;}
+    .cir_clockpin{position:absolute;width:50px;height:50px;margin:-25px;top:50%;left:50%;border-radius:0 50% 50% 50%;background:rgba(255,0,0,0.5);}
+        .longpin{position:absolute;width:2px;height:75px;top:-100px;left:50%;border-radius:20%;background:linear-gradient(to bottom, rgba(0,0,0,0.8) , rgba(0,0,0,0));}
+    
+    .pie_case{position:absolute;width:100%;height:100%;border-radius:50%;overflow:hidden;transition: ease 250ms;}
+        .pie_view {position:absolute;width:50%;height:100%;right:0px;overflow:hidden;}
+            .pie_case_in {position:absolute;width:250px;height:250px;top:0px;right:0px;}
+                .piece {position:absolute;width:50%;height:100%;top:0px;left:0px;transition: ease 250ms;}
+*/

@@ -1,0 +1,124 @@
+<div class='col-md-5 preparing'>
+    시간표용 원형그래프 위치(최대 12시간까지 커버, 그이상은 그래프에 이상)
+    
+    <div class="cir_main">
+        <div class="cir_base"></div>
+        <div class="cir_center_symb" style="z-index:100"></div>
+        <div class="cir_clockpin" id="clockPin" style="z-index:99;background:none"><div class="longpin"></div></div>
+        <div class="cir_clockpin" id="clockPin2" style="z-index:99"></div>
+        
+        <% @every_schd.each do |t|%>
+        <!--데이터베이스에서 조각정보 정제 및 출력-->
+        
+        <!--12시간이 넘는경우와 아닌경우로 나눔-->
+          <% if (((t.schd_ft.strftime("%H").to_i*60 + t.schd_ft.strftime("%M").to_i) - (t.schd_st.strftime("%H").to_i*60 + t.schd_st.strftime("%M").to_i))*360)/1440 > 180 %>
+            <div class="pie_case" style="transform:rotate(<%= ((t.schd_st.strftime("%H").to_i*60 + t.schd_st.strftime("%M").to_i)*360)/1440 %>deg);">
+                    <div class="piece_a" style="background:<%= t.schd_color %>;font-weight:bold;color:#000"><span>조각</span></div>
+                    <div class="pie_case_in 1" style="transform:rotate(<%= ((t.schd_ft.strftime("%H").to_i*60 + t.schd_ft.strftime("%M").to_i-(t.schd_st.strftime("%H").to_i*60 + t.schd_st.strftime("%M").to_i))*360)/1440 - 180 %>deg);">
+                        <div class="piece_a" style="background:<%= t.schd_color %>;font-weight:bold;color:#000"><span>조각</span></div>
+                    </div>
+            </div>
+          <% else %>
+            <div class="pie_case" style="transform:rotate(<%= ((t.schd_st.strftime("%H").to_i*60 + t.schd_st.strftime("%M").to_i)*360)/1440 %>deg);">
+                <div class="pie_view">
+                    <div class="pie_case_in" style="transform:rotate(<%= ((t.schd_ft.strftime("%H").to_i*60 + t.schd_ft.strftime("%M").to_i-(t.schd_st.strftime("%H").to_i*60 + t.schd_st.strftime("%M").to_i))*360)/1440 %>deg);">
+                        <div class="piece_b" style="background:<%= t.schd_color %>;font-weight:bold;color:#000"><span>조각</span></div>
+                    </div>
+                </div>
+            </div>
+          <% end %>
+
+        <% end %>
+       
+       
+    </div>
+    
+</div>
+
+<div class='col-md-7 preparing'>
+    달력 위치입니다
+    
+    <div>
+      <div id="calendarDiv" style="font-family:Gulim;font-size:9pt;"></div> 
+    </div>
+    
+    
+    
+</div>
+
+<div class='col-md-6'>
+    <h2>일정목록</h2>
+    
+    <hr>
+    <br>
+    <a href="/write_schd_form">일정 추가하기</a>
+    <br>
+    <hr><br><br>
+    <% @every_schd.each do |s|%>
+        <div class="schedule_one" style="background:<%= s.schd_color %>;">
+            글번호 : <%= s.id %> <br>
+            <h3>일 정 : <%= s.schd_title %> </h3> 일정종류 : <%= s.schd_type %><br>
+            상세내용 : <%= s.schd_cont %> <br>
+            일자 : <%= s.schd_st.strftime("%Y년%m월%d일(%a)") %> ~ <%= s.schd_ft.strftime("%Y년%m월%d일(%a)") %><br>
+            시작시간 : <%= s.schd_st.strftime("%I:%M %p") %> <br>
+            종료시간 : <%= s.schd_ft.strftime("%I:%M %p") %> <!--데이터베이스 입력 시간 출력-->
+            <a href="/update_schd_form/<%= s.id %>">[수정]</a>
+            <a href="/destroy_schd/<%= s.id %>">[삭제]</a><!--데이터 id값(id는 자동으로 생성됨)-->
+        </div>
+    <hr>
+    <% end %>
+
+</div>
+
+
+<script>
+        
+    //달력폼 생성하기
+    var today = new Date();
+    function showCalendar(y, m) { 
+        var text = '<table class="cal_table">\n<tr><td class="cal_subject" colspan=7 style="text-align:center">';
+        text += '<span class="cal_button_st" onclick="showCalendar('+(y-1)+','+m+')"> Y- </span>';
+        text += '<span class="cal_button_st" onclick="showCalendar('+(m==1?(y-1)+','+12:y+','+(m-1))+')"> ◀ </span>'; 
+        text += '[' + y + '-' + ((m < 10) ? ('0' + m) : m) + ']'; 
+        text += '<span class="cal_button_st" onclick="showCalendar('+(m==12?(y+1)+','+1:y+','+(m+1))+')"> ▶ </span>'; 
+        text += '<span class="cal_button_st" onclick="showCalendar('+(y+1)+','+m+')"> Y+ </span>'; 
+        text += ' <div class="cal_today_bt" onclick="showCalendar('+ today.getFullYear() +','+ (today.getMonth()+1) +')">Today</button>';
+        text += '</td>'; 
+    
+        var d1 = (y+(y-y%4)/4-(y-y%100)/100+(y-y%400)/400 
+              +m*2+(m*5-m*5%9)/9-(m<3?y%4||y%100==0&&y%400?2:3:4))%7; 
+        for (var i = 0; i < 42; i++) { 
+            if (i%7==0) text += '</tr>\n<tr>'; //줄띄우기
+            if (i < d1 || i >= d1+(m*9-m*9%8)/8%2+(m==2?y%4||y%100==0&&y%400?28:29:30)) 
+                text += '<td class="cal_date"> </td>'; //날짜없는 빈칸만들기
+            else //날짜칸 생성하기
+                text += '<td class="cal_date" style=' + (i%7 ? '' : '"color:red;"') + '> ' + (i+1-d1) + '<p>';
+                text += '</p></td>';
+        } 
+        document.getElementById('calendarDiv').innerHTML = text + '</tr>\n</table>'; 
+    }
+    
+    //달력용 날짜구하기
+    $(document).ready(function(){
+        showCalendar(today.getFullYear(),today.getMonth()+1);
+    })
+    
+    
+    
+    //24시 원형시계 시침위치 계산
+    function showNowTime(){
+        var nowTime = new Date();
+        var h = nowTime.getHours();
+        var m = nowTime.getMinutes();
+        var timedeg = ((h*60 + m*1)*360)/1440 ; //이미지로 교체시 45도 증가를 없애야함
+        
+        //실질적 각도조정부분
+        document.getElementById('clockPin').style.transform = "rotate("+timedeg+"deg)";
+        document.getElementById('clockPin2').style.transform = "rotate("+(timedeg+45)+"deg)";
+    }
+    
+    //24시 원형시계 시간구하기 및 그래프에 적용(30초마다 실행)
+    showNowTime();
+    var timer = setInterval( function(){ showNowTime(); }, 30000);
+        
+</script>
