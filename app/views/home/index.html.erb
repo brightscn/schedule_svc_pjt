@@ -75,7 +75,46 @@
         
     //달력폼 생성하기
     var today = new Date();
+    var md_title_ori = [ //전체데이터 불러오기(최적화 필요)
+        <% @every_schd.each do |s|%>
+             "<%= s.schd_title %>",
+        <% end %>
+    ];
+    var md_time_st_ori = [
+        <% @every_schd.each do |s|%>
+             "<%= s.schd_st %>",
+        <% end %>
+    ];
+    var md_time_ft_ori = [
+        <% @every_schd.each do |s|%>
+             "<%= s.schd_ft %>",
+        <% end %>
+    ];
+    var md_bg_color_ori = [
+        <% @every_schd.each do |s|%>
+             "<%= s.schd_color %>",
+        <% end %>
+    ];
+    
     function showCalendar(y, m) { 
+
+        //달력포함일정 거르기
+        j=0;
+        var md_date_title = [];
+        var md_date_st = [];
+        var md_date_ft = [];
+        var md_date_color = [];
+        //함수에 입력된 연/월이 맞는 일정만 따로 저장
+        for(var i = 0, len = md_time_st_ori.length; i < len; i++){
+            if(md_time_st_ori[i].substring(0,4) == y && md_time_st_ori[i].substring(5,7) == m){
+                md_date_title[j]=md_title_ori[i];
+                md_date_st[j]=md_time_st_ori[i];
+                md_date_ft[j]=md_time_ft_ori[i];
+                md_date_color[j]=md_bg_color_ori[i];
+                j++;   
+            }
+        }
+        
         var text = '<table class="cal_table">\n<tr><td class="cal_subject" colspan=7 style="text-align:center">';
         text += '<span class="cal_button_st" onclick="showCalendar('+(y-1)+','+m+')"> Y- </span>';
         text += '<span class="cal_button_st" onclick="showCalendar('+(m==1?(y-1)+','+12:y+','+(m-1))+')"> ◀ </span>'; 
@@ -84,6 +123,10 @@
         text += '<span class="cal_button_st" onclick="showCalendar('+(y+1)+','+m+')"> Y+ </span>'; 
         text += ' <div class="cal_today_bt" onclick="showCalendar('+ today.getFullYear() +','+ (today.getMonth()+1) +')">Today</button>';
         text += '</td>'; 
+        
+        
+        
+        
     
         var d1 = (y+(y-y%4)/4-(y-y%100)/100+(y-y%400)/400 
               +m*2+(m*5-m*5%9)/9-(m<3?y%4||y%100==0&&y%400?2:3:4))%7; 
@@ -91,9 +134,23 @@
             if (i%7==0) text += '</tr>\n<tr>'; //줄띄우기
             if (i < d1 || i >= d1+(m*9-m*9%8)/8%2+(m==2?y%4||y%100==0&&y%400?28:29:30)) 
                 text += '<td class="cal_date"> </td>'; //날짜없는 빈칸만들기
-            else //날짜칸 생성하기
-                text += '<td class="cal_date" style=' + (i%7 ? '' : '"color:red;"') + '> ' + (i+1-d1) + '<p>';
-                text += '</p></td>';
+            else { //날짜칸 생성하기
+            
+                text += '<td class="cal_date" style=' + (i%7 ? '' : '"color:red;"') + '> ' + (i+1-d1);
+
+                //오늘날짜인경우 오늘 표시
+                if( today.getFullYear() == y && (today.getMonth()+1) == m && today.getDate() == (i+1-d1)){
+                    text += '<b style="color:red"> &lt;Today&gt;</b>';
+                }
+                
+                //일정에 맞는 곳에 일정삽입
+                for(var k=0 ; k<j ; k++){
+                    if(md_date_st[k].substring(8,10) <= (i+1-d1) && md_date_ft[k].substring(8,10) >= (i+1-d1)){
+                        text += '<div class="cal_schd" style="background:'+ md_date_color[k] +'">'+ md_date_title[k] +'</div>';
+                    }
+                }
+                text += '</td>';
+            }
         } 
         document.getElementById('calendarDiv').innerHTML = text + '</tr>\n</table>'; 
     }
